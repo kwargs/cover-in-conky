@@ -1,0 +1,172 @@
+# Conky sample configuration
+#
+# the list of variables has been removed from this file in favour
+# of keeping the documentation more maintainable.
+# Check http://conky.sf.net for an up-to-date-list.
+
+# set to yes if you want Conky to be forked in the background
+background no
+
+# X font when Xft is disabled, you can pick one with program xfontsel
+
+# Use Xft?
+use_xft yes
+
+# Xft font when Xft is enabled
+xftfont Bitstream Vera Sans Mono:size=8
+
+# Text alpha when using Xft
+xftalpha 0.8
+
+# Update interval in seconds
+update_interval 3.0
+
+# This is the number of times Conky will update before quitting.
+# Set to zero to run forever.
+total_run_times 0
+
+# Create own window instead of using desktop (required in nautilus)
+own_window no 
+
+# If own_window is yes, you may use type normal, desktop or override
+own_window_type normal
+#own_window_type override
+
+# Use pseudo transparency with own_window?
+own_window_transparent yes
+
+# If own_window_transparent is set to no, you can set the background colour here
+own_window_colour hotpink
+
+# If own_window is yes, these window manager hints may be used
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+
+# Use double buffering (reduces flicker, may not work for everyone)
+double_buffer yes
+
+# Minimum size of text area
+minimum_size 400 5
+
+# Draw shades?
+draw_shades yes
+
+# Draw outlines?
+draw_outline no
+
+# Draw borders around text
+draw_borders no
+
+# Draw borders around graphs
+draw_graph_borders yes
+
+# Stippled borders?
+stippled_borders 8
+
+# border margins
+# border_margin 4
+
+# border width
+border_width 1
+
+# Default colors and also border colors
+default_color 222222
+default_shade_color white 
+default_outline_color 847D84
+
+# Text alignment, other possible values are commented
+#alignment top_left
+alignment top_right
+#alignment bottom_left
+#alignment bottom_right
+#alignment none
+
+# Gap between borders of screen and text
+# same thing as passing -x at command line
+gap_x 12
+gap_y 50
+
+# Subtract file system buffers from used memory?
+no_buffers yes
+
+# set to yes if you want all text to be in uppercase
+uppercase no
+
+# number of cpu samples to average
+# set to 1 to disable averaging
+cpu_avg_samples 2
+
+# number of net samples to average
+# set to 1 to disable averaging
+net_avg_samples 2
+
+# Force UTF8? note that UTF8 support required XFT
+override_utf8_locale yes
+
+# Add spaces to keep things from moving about?  This only affects certain objects.
+#use_spacer 5 5
+
+# Shows the maximum value in scaled graphs.
+show_graph_scale no
+
+# Shows the time range covered by a graph.
+show_graph_range no
+
+# Allow each port monitor to track at most this many connections (if 0 or not set, default is 256)
+#max_port_monitor_connections 256
+
+# Maximum number of special things, e.g. fonts, offsets, aligns, etc.
+#max_specials 512
+
+# Maximum size of buffer for user text, i.e. below TEXT line.
+#max_user_text 16384
+
+# Timing interval for music player thread, e.g. mpd, audacious
+#music_player_interval (update_interval is default)
+
+# Strictness of if_up. One of: up, link or address. The later ones imply the further ones.
+# Defaults to up.
+#if_up_strictness address
+
+# variable is given either in format $variable or in ${variable}. Latter
+# allows characters right after the variable and must be used in network
+# stuff because of an argument
+
+# stuff after 'TEXT' will be formatted on screen
+
+lua_load /home/wizard/bin/conky/mpd_cover.lua
+lua_load /home/wizard/bin/conky/mpd_smart_status.lua
+TEXT
+${if_mpd_playing}${lua_parse mpd_get_cover}${offset 104}${color 323232}${font DejaVu Sans Mono:size=14}${lua mpd_status_char}${font} ${mpd_elapsed} ${color #A3B1F0}${mpd_bar 6,190} ${color}${mpd_length}
+${offset 105}${color 323232}Artist:${color #263465}${lua strip ${mpd_artist} 30}
+${offset 105}${color 323232}Album :${color #263465}${lua strip ${mpd_album} 30}
+${offset 105}${color 323232}Title :${color #263465}${lua strip ${mpd_title} 30}
+
+${endif}${color #A3B1F0}$hr
+${color 323232}Uptime:$color $uptime ${color 323232}- Load:$color $loadavg
+${color 323232}CPU Usage:${color #263465} $cpu% ${color #A3B1F0}${cpubar}
+${color #A3B1F0}${cpugraph e0e0d8 A3B1F0} 
+${color 323232}RAM Usage:$color $mem/$memmax - $memperc% ${color #A3B1F0}${membar}
+${color 323232}Processes:$color $processes  ${color 323232}Running:$color $running_processes
+${color #A3B1F0}$hr
+${if_up wlan0}${alignc}${color}wlan0
+${color}down: ${color #263465}${lua flood 19 downspeed wlan0} ${color}up:${color #263465} ${lua flood 10 upspeed wlan0}
+${color #A3B1F0}${downspeedgraph wlan0 20,190 e0e0d8 A3B1F0}  ${upspeedgraph wlan0 20,190 e0e0d8 A3B1F0}${endif}
+${if_up eth0}${alignc}${color}eth0
+${color}down: ${color #263465}${lua flood 19 downspeed eth0} ${color}up:${color #263465} ${lua flood 10 upspeed eth0}
+${color #A3B1F0}${downspeedgraph eth0 20,190 e0e0d8 A3B1F0}  ${upspeedgraph eth0 20,190 e0e0d8 A3B1F0}${endif}
+${color 323232}File systems: $color${fs_used /}/${fs_size /}
+${color #A3B1F0}$hr
+${if_existing /sys/class/power_supply/BAT1/present}${color}Battery status:${color #263465} ${execi 10 acpi -b | awk '{print $3, $4}' | sed -e s/,//2}
+${color 323232}External power:${color #263465} ${acpiacadapter}${else}Battery status: Not present
+${color 323232}External power:${color #263465} ${acpiacadapter}${endif}
+${color #A3B1F0}$hr
+${color}Name              PID     CPU%   MEM%  TIME
+${color #263465} ${top name 1} ${top pid 1} ${top cpu 1} ${top mem 1} ${top time 1}
+${color 323232} ${top name 2} ${top pid 2} ${top cpu 2} ${top mem 2} ${top time 2}
+${color 323232} ${top name 3} ${top pid 3} ${top cpu 3} ${top mem 3} ${top time 3}
+${color 323232} ${top name 4} ${top pid 4} ${top cpu 4} ${top mem 4} ${top time 4}
+${color 323232} ${top name 5} ${top pid 5} ${top cpu 5} ${top mem 5} ${top time 5}
+${color}Mem usage
+${color #263465} ${top_mem name 1} ${top_mem pid 1} ${top_mem cpu 1} ${top_mem mem 1} ${top_mem time 1}
+${color 323232} ${top_mem name 2} ${top_mem pid 2} ${top_mem cpu 2} ${top_mem mem 2} ${top_mem time 2}
+${color 323232} ${top_mem name 3} ${top_mem pid 3} ${top_mem cpu 3} ${top_mem mem 3} ${top_mem time 3}
