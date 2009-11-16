@@ -1,0 +1,4 @@
+lua scipt that display album cover in conky
+require:
+    lua filesystem (http://www.luaforge.net/projects/luafilesystem) on ubuntu liblua5.1-filesystem0
+    imagemagic - for image resize 
