@@ -27,7 +27,7 @@ just look at conkyrc-full-example
 Screenshot
 ------------
 
-![conky album cover](http://th09.deviantart.net/fs50/300W/i/2009/320/a/d/Cover_at_conky_by_kwargs.png "conky album cover")
+![conky album cover](http://github.com/kwargs/cover-in-conky/raw/master/screenshot.png "conky album cover")
 
 [Full screen shot](http://kwargs.deviantart.com/art/Cover-at-conky-143790332 "Full screenshot")
 
