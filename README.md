@@ -17,10 +17,10 @@ How to use
     * `lua_load /path/to/mpd_cover.lua`
 2. add in TEXT section something like:
 
-    ${if_mpd_playing}\
-    ${lua update_mpd_cover /path/where/store/found-cover /path/where/found/no-cover-image /path/to/music /path/to/sonata/covers/dir/if/you/use/it}\
-    ${image /path/where/store/found-cover -n -p2,2}
-    ${endif}
+        ${if_mpd_playing}\
+        ${lua update_mpd_cover /path/where/store/found-cover /path/where/found/no-cover-image /path/to/music /path/to/sonata/covers/dir/if/you/use/it}\
+        ${image /path/where/store/found-cover -n -p2,2}
+        ${endif}
 
 just look at conkyrc-full-example
 
