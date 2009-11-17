@@ -136,7 +136,8 @@ show_graph_range no
 lua_load /home/wizard/bin/conky/mpd_cover.lua
 lua_load /home/wizard/bin/conky/mpd_smart_status.lua
 TEXT
-${if_mpd_playing}${lua_parse mpd_get_cover}${offset 104}${color 323232}${font DejaVu Sans Mono:size=14}${lua mpd_status_char}${font} ${mpd_elapsed} ${color #A3B1F0}${mpd_bar 6,190} ${color}${mpd_length}
+${if_mpd_playing}${lua update_mpd_cover /tmp/conky-cover.jpg /home/wizard/music/no_cover.jpg /home/wizard/music /home/wizar/.covers}${image /tmp/conky-cover.jpg -n -p2,2 }\
+${offset 104}${color 323232}${font DejaVu Sans Mono:size=14}${lua mpd_status_char}${font} ${mpd_elapsed} ${color #A3B1F0}${mpd_bar 6,190} ${color}${mpd_length}
 ${offset 105}${color 323232}Artist:${color #263465}${lua strip ${mpd_artist} 30}
 ${offset 105}${color 323232}Album :${color #263465}${lua strip ${mpd_album} 30}
 ${offset 105}${color 323232}Title :${color #263465}${lua strip ${mpd_title} 30}

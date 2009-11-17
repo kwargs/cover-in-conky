@@ -2,20 +2,14 @@
 -- How to use:
 -- In the settings section (before TEXT), add this:
 --     lua_load /path/to/mpd_cover.lua
--- modify mpd_cover.lua:
---     change library_path
---     sonata_cover_path (set it to nil if you don't use sonata)
---     no_cover_path (image that is shown if cover not found)
 -- add in TEXT section something like:
 --
--- ${if_mpd_playing}${lua_parse mpd_get_cover}${endif}
+-- ${if_mpd_playing}\
+-- ${lua update_mpd_cover /path/where/store/found-cover /path/where/found/no-cover-image /path/to/music /path/to/sonata/covers/dir/if/you/use/it}\
+-- ${image /path/where/store/found-cover -n -p2,2}
+-- ${endif}
 --
 require "lfs"
-
-library_path = '/home/wizard/music/'
-sonata_covers_path = '/home/wizard/.covers/'
-no_cover_path = '/home/wizard/music/no_cover.jpg'
-cover_path = '~/tmp/conky-cover.jpg'
 
 local last = nil;
 local cover_images = {'cover', 'folder', 'front'}
@@ -44,7 +38,7 @@ local function compare_images(img_a, img_b)
     return not res
 end
 
-function conky_mpd_get_cover()
+function conky_update_mpd_cover(cover_path, no_cover_path, library_path, sonata_covers_path)
     local current = string.lower(conky_parse('${mpd_artist}-${mpd_album}'))
 
     if last == nil or last ~= current then
@@ -54,9 +48,9 @@ function conky_mpd_get_cover()
             local song_base = string.gsub(song_path, '[^/]-$', '')
 
             local images = {}
-            for file in lfs.dir(library_path .. song_base) do
+            for file in lfs.dir(library_path .. '/' .. song_base) do
                 local t  = string.lower(file)
-                if string.find(t, 'jpe?g') ~= nil or string.find(t, 'png$') ~= nil then
+                if string.find(t, 'jpe?g$') ~= nil or string.find(t, 'png$') ~= nil then
                     table.insert(images, file)
                 end
             end
@@ -64,13 +58,13 @@ function conky_mpd_get_cover()
             if #images > 0 then
                 table.sort(images, compare_images)
                 cover = unpack(images)
-                cover = library_path .. song_base .. cover
+                cover = library_path .. '/' .. song_base .. cover
             end
 
             if cover == nil and sonata_covers_path ~= nil then
                 for file in lfs.dir(sonata_covers_path) do
                     if string.find(string.lower(file), current, 1, true) ~= nil then
-                        cover = sonata_covers_path .. file
+                        cover = sonata_covers_path .. '/' .. file
                         break
                     end
                 end
@@ -84,6 +78,6 @@ function conky_mpd_get_cover()
 
         last = current
     end
-    return '${image ' .. cover_path .. ' -n -p 2,2}'
+    return ""
 end
 

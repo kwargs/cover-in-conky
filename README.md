@@ -15,12 +15,12 @@ How to use
 ------------
 1. In the settings section (before TEXT), add this:
     * `lua_load /path/to/mpd_cover.lua`
-2. modify mpd_cover.lua:
-    * change `library_path = '/path/to/my/music'`
-    * change `sonata_cover_path = '/path/to/sonata-covers'` (set it to nil if you dont use sonata)
-    * set `no_cover_path = '/path/to/no-cover-image'` (image that is shown if cover not found)
-3. add in TEXT section something like:
-    `${if_mpd_playing}${lua_parse mpd_get_cover}${endif}`
+2. add in TEXT section something like:
+
+    ${if_mpd_playing}\
+    ${lua update_mpd_cover /path/where/store/found-cover /path/where/found/no-cover-image /path/to/music /path/to/sonata/covers/dir/if/you/use/it}\
+    ${image /path/where/store/found-cover -n -p2,2}
+    ${endif}
 
 just look at conkyrc-full-example
 
