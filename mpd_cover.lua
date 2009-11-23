@@ -14,32 +14,39 @@ require "lfs"
 local last = nil;
 local cover_images = {'cover', 'folder', 'front'}
 
-local function compare_images(img_a, img_b)
-    local function is_cover(img)
-        local t = string.lower(img)
-        local img_is_cover = nil
-        for _, cover_t in ipairs(cover_images) do
-            if string.find(t, cover_t) ~= nil then
+local function compare_images(current_album)
+    return function (img_a, img_b)
+        local function is_cover(img)
+            local t = string.lower(img)
+            local img_is_cover = nil
+            for _, cover_t in ipairs(cover_images) do
+                if string.find(t, cover_t) ~= nil then
+                    return true
+                end
+            end
+            if string.find(t, string.lower(current_album)) ~= nil then 
                 return true
             end
+            return false
         end
-        return false
-    end
 
-    local a_is_cover = is_cover(img_a)
-    local b_is_cover = is_cover(img_b)
+        local a_is_cover = is_cover(img_a)
+        local b_is_cover = is_cover(img_b)
 
-    local res = img_a < img_b
-    if a_is_cover and (not b_is_cover) then
-        res =  false
-    elseif (not a_is_cover) and b_is_cover then
-        res = true 
+        local res = img_a < img_b
+        if a_is_cover and (not b_is_cover) then
+            res =  false
+        elseif (not a_is_cover) and b_is_cover then
+            res = true 
+        end
+        return not res
     end
-    return not res
 end
 
 function conky_update_mpd_cover(cover_path, no_cover_path, library_path, sonata_covers_path)
-    local current = string.lower(conky_parse('${mpd_artist}-${mpd_album}'))
+    local album = conky_parse('${mpd_album}')
+    local artist = conky_parse('${mpd_artist}')
+    local current = string.lower(artist .. '-' .. album)
 
     if last == nil or last ~= current then
         local cover = nil;
@@ -56,7 +63,7 @@ function conky_update_mpd_cover(cover_path, no_cover_path, library_path, sonata_
             end
 
             if #images > 0 then
-                table.sort(images, compare_images)
+                table.sort(images, compare_images(album))
                 cover = unpack(images)
                 cover = library_path .. '/' .. song_base .. cover
             end
